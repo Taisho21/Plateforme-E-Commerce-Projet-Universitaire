@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enjoy - Livraison</title>
+    <style>
+        /* --- BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #fff; color: #333; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- COLORS --- */
+        :root { --main-green: #27ae60; --light-green: #eafaf1; --dark-text: #2c3e50; }
+
+        /* --- HEADER --- */
+        header {
+            padding: 1rem 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--main-green); letter-spacing: -1px; }
+        .btn-login {
+            background-color: var(--light-green); color: var(--main-green);
+            padding: 8px 18px; border-radius: 4px; font-weight: 600;
+        }
+
+        .btn-login:hover { background-color: var(--main-green); color: white; }
+
+        .btn-logout {
+            background-color: var(--light-green); 
+            color: var(--main-green);
+            padding: 8px 15px; 
+            border-radius: 4px; 
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-panier {
+            background-color: var(--light-green); 
+            color: var(--main-green);
+            padding: 8px 15px; 
+            border-radius: 4px; 
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+
+        header nav ul {
+            display: flex;       
+            align-items: center; 
+            gap: 15px;           
+        }
+
+        .pro {
+            background-color: var(--light-green); 
+            color: var(--main-green);
+            padding: 8px 18px; 
+            border-radius: 10px; 
+            font-weight: 600;
+            margin-right: 10px; 
+        }
+        .pro:hover { background-color: var(--main-green); color: white; }
+
+        .hero {
+            background-color: var(--main-green); color: white;
+            padding: 60px 20px; text-align: center;
+        }
+        .hero h1 { margin-bottom: 20px; font-weight: 500; }
+        
+        .search-bar {
+            background: white; padding: 5px; border-radius: 4px;
+            display: flex; width: 100%; max-width: 400px; margin: 0 auto;
+        }
+        .search-bar input { border: none; padding: 10px; flex-grow: 1; outline: none; }
+        .search-bar button {
+            background-color: var(--dark-text); color: white; border: none;
+            padding: 10px 20px; border-radius: 3px; cursor: pointer;
+        }
+
+        /* --- GRID --- */
+        .container { padding: 40px 5%; max-width: 1200px; margin: 0 auto; }
+        .section-title { margin-bottom: 20px; font-size: 1.5rem; color: var(--dark-text); }
+        
+        .restaurant-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px;
+        }
+
+        /* --- CARD CLEAN --- */
+        .card {
+            border: 1px solid #eee; border-radius: 8px; overflow: hidden;
+            transition: 0.2s; background: white;
+        }
+        .card:hover { border-color: var(--main-green); }
+        
+        .card-img {
+            height: 160px; background-color: #f0f0f0; background-size: cover; background-position: center;
+        }
+        .card-content { padding: 15px; }
+        .card-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .resto-name { font-weight: bold; color: var(--dark-text); }
+        .resto-rating { color: #f1c40f; font-weight: bold; }
+        .resto-info { font-size: 0.9rem; color: #7f8c8d; }
+        .resto-delivery { margin-top: 10px; color: var(--main-green); font-size: 0.9rem; font-weight: 600; }
+
+        footer { text-align: center; padding: 30px; color: #aaa; font-size: 0.8rem; border-top: 1px solid #eee; margin-top: 40px; }
+
+        .recherche_filtre {
+            display: flex;        
+            gap: 10px;            /* Espace de 10px entre chaque élément */
+            justify-content: center; /* Centre le tout au milieu de la page */
+            max-width: 1100px;     /* Largeur max pour pas que ça soit trop large */
+            margin: 0 auto;       /* Centre le bloc sur la page */
+        }
+
+        /* LE TRUC IMPORTANT : Tous les champs ont la même allure de base */
+        .recherche_filtre input, 
+        .recherche_filtre select, 
+        .recherche_filtre button {
+            height: 45px;         /* Hauteur unique pour tout le monde ! */
+            border: none;         /* Pas de bordure moche */
+            border-radius: 4px;   /* Coins un peu arrondis */
+            padding: 0 15px;      /* Espace à l'intérieur du texte */
+            font-size: 1rem;      /* Taille du texte lisible */
+        }
+
+        /* L'input de recherche s'étire pour prendre la place */
+        .recherche_filtre input[name="q"] {
+            flex-grow: 1;         /* "Prends toute la place qui reste" */
+            min-width: 200px;     /* Mais ne deviens pas trop petit */
+        }
+
+        /* Le bouton */
+        .recherche_filtre button {
+            background-color: #2c3e50;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="{{ url_for('accueil') }}" class="logo">ENJOY</a>
+    <nav>
+        <ul>
+            <li><a href="{{url_for('privateconnexion')}}" class="pro">PRO</a></li>
+
+            {% if etat_connexion %}
+                <li>
+                    <a href="{{url_for('profil')}}" class="btn-login">
+                        Mon Profil ({{etat_connexion}})
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="{{url_for('deconnexion')}}" class="btn-logout">
+                        Déconnexion
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="{{url_for('panier')}}" class="btn-panier">
+                        <img src="{{url_for('static', filename ='img/panier.png')}}" width="18">
+                    </a>
+                </li>
+                
+            {% else %}
+                <li><a href="{{url_for('connexion')}}" class="btn-login">Connexion</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    </header>
+
+    <section class="hero">
+        <h1>On mange quoi ?</h1>
+        
+        <form class="recherche_filtre" action="/recherche" method="GET">
+            
+            <input type="text" name="q" placeholder="Rechercher un resto..." value="{{ request.args.get('q', '') }}">
+
+            <select name="note_min">
+                <option value="" selected>Note min...</option>
+                <option value="0">0⭐</option>
+                <option value="1">1⭐</option>
+                <option value="2">2⭐</option>
+                <option value="3">3⭐</option>
+                <option value="4">4⭐+</option>
+            </select>
+
+            <select name="mot_cle">
+                <option value="" selected>Spécialité...</option>
+                {% for mot in mot_cle %}
+                    <option value="{{ mot[0] }}">{{ mot[0] }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Go</button>
+
+        </form>
+    </section>
+
+    <div class="container">
+        <h2 class="section-title">Restaurants</h2>
+        <div class="restaurant-grid">
+            {% for resto in restaurants %}
+            <a href="{{ url_for('detail_restaurant', id_resto=resto.id_resto) }}">
+                <div class="card">
+                    <div class="card-img" style="background-image: url('{{ url_for('static', filename='img/restaurants/' + resto.photo_url) }}')"></div>
+                    <div class="card-content">
+                        <div class="card-header">
+                            <span class="resto-name">{{ resto.nom }}</span> 
+                            {% if resto.note_moyenne %}
+                                    <span class="resto-rating">★ {{ resto.note_moyenne }}</span>
+                                {% else %}
+                                    <span class="resto-rating" style="color:green; font-size:0.8rem;">Nouveau !</span>
+                                {% endif %}
+                        </div>
+                        <p class="resto-info">{{ resto.horaires }}</p>
+                        <p class="resto-delivery">Livraison {{ resto.frais_livraison }}€</p>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer>&copy; 2025 Enjoy App</footer>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enjoy - Votre Panier</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f9f9f9; color: #333; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        :root { --main-green: #27ae60; --light-green: #eafaf1; --dark-text: #2c3e50; }
+
+        header {
+            padding: 1rem 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #eee;
+            background-color: white;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--main-green); letter-spacing: -1px; }
+        
+        .btn-login, .btn-logout, .pro {
+            background-color: var(--light-green); 
+            color: var(--main-green);
+            padding: 8px 15px; 
+            border-radius: 4px; 
+            font-weight: 600;
+        }
+        header nav ul { display: flex; align-items: center; gap: 15px; }
+
+        .hero {
+            background-color: var(--main-green); color: white;
+            padding: 40px 20px; text-align: center;
+        }
+        .hero h1 { margin: 0; font-weight: 500; }
+
+        .container { 
+            display: flex; 
+            max-width: 1000px; 
+            margin: 30px auto; 
+            padding: 0 20px;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        
+        .cart-items { 
+            flex: 2; 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            overflow: hidden; 
+        }
+        .cart-title { 
+            padding: 15px; 
+            font-size: 1.2rem; 
+            border-bottom: 1px solid #eee; 
+        }
+
+        .item-row { 
+            display: flex; 
+            align-items: center; 
+            padding: 15px; 
+            border-bottom: 1px solid #f5f5f5; 
+        }
+        .item-row:last-child { border-bottom: none; }
+        
+        .item-img { 
+            width: 60px; 
+            height: 60px; 
+            object-fit: cover; 
+            border-radius: 4px; 
+            margin-right: 15px; 
+            background: #eee;
+        }
+        .item-details { flex-grow: 1; }
+        .item-details h4 { margin: 0 0 4px 0; font-size: 1rem; color: var(--dark-text); }
+        .item-price { font-weight: bold; color: var(--main-green); }
+
+        .item-qty { 
+            width: 50px; 
+            text-align: center; 
+            border: 1px solid #ddd; 
+            padding: 5px; 
+            border-radius: 4px; 
+            margin-right: 15px; 
+        }
+
+        .cart-summary { 
+            flex: 1; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 20px;
+        }
+        .summary-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 8px 0; 
+            font-size: 0.95rem; 
+        }
+        .summary-total { 
+            font-weight: bold; 
+            font-size: 1.2rem; 
+            border-top: 1px solid #ddd; 
+            padding-top: 15px; 
+            margin-top: 10px; 
+        }
+        
+        .btn-validate { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: var(--main-green); 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            margin-top: 20px; 
+            cursor: pointer;
+        }
+        .btn-validate:hover { background-color: #2ecc71; }
+        
+        .empty-cart {
+            padding: 40px 20px;
+            text-align: center;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="{{ url_for('accueil') }}" class="logo">ENJOY</a>
+        <nav>
+            <ul>
+                <li><a href="{{url_for('privateconnexion')}}" class="pro">PRO</a></li>
+                {% if etat_connexion %}
+                    <li><a href="{{url_for('profil')}}" class="btn-login">Mon Profil ({{etat_connexion}})</a></li>
+                    <li><a href="{{url_for('deconnexion')}}" class="btn-logout">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{{url_for('connexion')}}" class="btn-login">Connexion</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Votre panier</h1>
+    </section>
+
+    {% if panier %}
+        <main class="container">
+            <div class="cart-items">
+                <div class="cart-title">Vos articles</div>
+                
+                {% for id_plat, item in panier.items() %}
+                    <div class="item-row">
+                        <img src="{{ url_for('static', filename='img/plats/' + (item.photo_url if item.photo_url else 'default.jpg')) }}" class="item-img">
+                        <div class="item-details">
+                            <h4>{{ item.nom }}</h4>
+                            <span class="item-price">{{ item.prix }}€/unité</span>
+                        </div>
+                        
+                        <span class="item-qty">{{ item.quantite }}</span>
+                        <span class="item-price">{{ item.prix_quantite }}€</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="cart-summary">
+                <div class="cart-title">Résumé</div>
+                
+                <div class="summary-row">
+                    <span>Sous-total</span>
+                    <span>{{ prix_total }}€</span>
+                </div>
+                <div class="summary-row">
+                    <span>Livraison</span>
+                    <span>{{frais}}</span>
+                </div>
+                
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span>{{ prix_total+ frais }}€</span>
+                </div>
+                
+               <form action="{{ url_for('valide_commande') }}" method="POST">
+                    <button type="submit" class="btn-validate">Passer la commande</button>
+                </form>
+            </div>
+        </main>
+    {% else %}
+        <div class="empty-cart">
+            <p>Votre panier est vide</p>
+        </div>
+    {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ info.nom }}</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #fff; color: #333; margin: 0; padding-bottom: 100px; }
+        a { text-decoration: none; color: inherit; }
+        :root { --main-green: #27ae60; }
+
+        /* HEADER */
+        header { padding: 20px; border-bottom: 1px solid #eee; }
+        .back-link { color: #888; font-weight: 500; }
+
+        /* INFO RESTO */
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .resto-header { text-align: center; margin-bottom: 40px; }
+        .resto-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; background: #eee; margin-bottom: 10px; }
+        h1 { font-size: 1.6rem; margin-bottom: 5px; }
+        .sub-info { color: #888; font-size: 0.9rem; }
+
+        /* MENU */
+        .section-title { font-size: 1.1rem; font-weight: bold; margin: 30px 0 15px 0; border-bottom: 2px solid var(--main-green); display: inline-block; }
+        
+        .menu-item { display: flex; align-items: flex-start; margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid #f5f5f5; }
+        .menu-item:last-child { border-bottom: none; }
+        
+        .item-text { flex: 1; padding-right: 15px; }
+        .item-text h3 { font-size: 1rem; margin: 0 0 5px 0; }
+        .item-text p { font-size: 0.85rem; color: #999; margin: 0; line-height: 1.4; }
+        .item-price { color: var(--main-green); font-weight: bold; margin-top: 8px; display: block; }
+
+        .item-img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; background: #f0f0f0; }
+        
+        input[type="number"] { width: 40px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; text-align: center; margin-left: 10px; align-self: center; }
+
+        /* BOUTON FLOTTANT */
+        .bottom-bar { position: fixed; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; }
+        .btn-order { background: #222; color: white; border: none; padding: 15px 40px; border-radius: 50px; font-weight: bold; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .btn-order:hover { background: var(--main-green); }
+
+        /* AVIS */
+        .avis-box { background: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 10px; font-size: 0.9rem; }
+        .stars { color: #f1c40f; }
+        
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="{{ url_for('accueil') }}" class="back-link">← Retour</a>
+    </header>
+
+    <div class="container">
+        <div class="resto-header">
+            <img src="{{ url_for('static', filename='img/restaurants/' + info.photo_url) }}" class="resto-img">
+            <h1>{{ info.nom }}</h1>
+            <p class="sub-info">{{ info.nom_rue }}, {{ info.nom_ville }} • {{ info.horaires }}</p>
+        </div>
+
+        <form action="{{url_for('ajout_panier',id_resto=info.id_resto)}}" method="POST">
+            <input type="hidden" name="id_resto" value="{{ info.id_resto }}">
+            
+            <h2 class="section-title">La Carte</h2>
+            
+            {% for plat in menu %}
+            <div class="menu-item">
+                <div class="item-text">
+                    <h3>{{ plat.nom }}</h3>
+                    <p>{{ plat.description }}</p>
+                    <span class="item-price">{{ plat.prix }}€</span>
+                </div>
+                <img src="{{ url_for('static', filename='img/plats/' + (plat.photo_url if plat.photo_url else 'default.jpg')) }}" class="item-img">
+                <input type="number" name="qte_{{ plat.id_plat }}" min="0" value="0">
+            </div>
+            {% endfor %}
+            
+            <div class="bottom-bar">
+                <button type="submit" class="btn-order">Voir le panier</button>
+            </div>
+        </form>
+
+        <h2 class="section-title">Avis</h2>
+        {% if avis %}
+            {% for av in avis %}
+            <div class="avis-box">
+                <strong>{{ av.prenom }}</strong> <span class="stars">★ {{ av.note }}</span> <br>
+                <span style="color:#666">{{ av.commentaire }}</span>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color:#ccc;">Aucun avis pour le moment.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

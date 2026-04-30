@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion PRO</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { width: 100%; max-width: 350px; padding: 20px; }
+        
+        h2 { text-align: center; color: #27ae60; margin-bottom: 30px; }
+        
+        input[type="text"], input[type="password"] {
+            width: 100%; padding: 12px; margin-bottom: 15px;
+            border: 1px solid #ddd; border-radius: 4px; background: #fdfdfd; outline: none;
+        }
+        input:focus { border-color: #27ae60; background: white; }
+
+        input[type="submit"] {
+            width: 100%; padding: 12px; background: #27ae60; color: white;
+            border: none; border-radius: 4px; font-weight: bold; cursor: pointer;
+        }
+        input[type="submit"]:hover { background: #219150; }
+
+        .links { text-align: center; margin-top: 20px; font-size: 0.9rem; }
+        a { color: #27ae60; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Enjoy PRO</h2>
+        <form method="post" action="{{ url_for('verif_pro') }}">
+            <input type="text" name="Matricule" placeholder="Matricule" required>
+            <input type="password" name="mdp_pro" placeholder="Mot de passe" required>
+            <input type="submit" value="SE CONNECTER">
+        </form>
+        <div class="links">
+            <a href="{{url_for('inscription')}}">Créer un compte</a> <br><br>
+            <a href="{{url_for('accueil')}}" style="color:#999; font-weight:normal;">Retour accueil</a>
+        </div>
+    </div>
+    {{erreur}}
+</body>
+</html>

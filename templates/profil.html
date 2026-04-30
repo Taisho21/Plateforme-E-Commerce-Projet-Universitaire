@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mon Profil</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f9f9f9; color: #333; margin: 0; }
+        .container { max-width: 800px; margin: 40px auto; padding: 20px; }
+        
+        /* En-tête simple */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        a.retour { color: #777; text-decoration: none; font-weight: 500; }
+        h1 { color: #27ae60; margin: 0; }
+
+        /* Carte Points Fidelité */
+        .card-points {
+            background: white; padding: 30px; border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px;
+            text-align: center; border-top: 5px solid #27ae60;
+        }
+        .points-valeur { font-size: 3rem; font-weight: bold; color: #27ae60; display: block; }
+        .points-label { color: #888; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
+
+        /* Liste des Commandes */
+        .liste-commandes { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .cmd-item { 
+            padding: 20px; border-bottom: 1px solid #eee; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .cmd-item:last-child { border-bottom: none; }
+        
+        .cmd-info strong { font-size: 1.1rem; display: block; }
+        .cmd-date { color: #999; font-size: 0.9rem; }
+        .cmd-prix { font-weight: bold; font-size: 1.1rem; }
+        
+        .status { 
+            padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; margin-left: 10px;
+            text-transform: uppercase;
+        }
+        /* Couleurs des statuts */
+        .livree { background: #d4edda; color: #155724; }
+        .en_attente { background: #fff3cd; color: #856404; }
+        .annulee { background: #f8d7da; color: #721c24; }
+        .en_cours { background: #cce5ff; color: #004085; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Mon Espace</h1>
+            <a href="{{ url_for('accueil') }}" class="retour">← Retour à l'accueil</a>
+        </header>
+
+        <div class="card-points">
+            <span class="points-valeur">{{ client.points_fidelite }}</span>
+            <span class="points-label">Points de fidélité disponibles</span>
+        </div>
+
+        <h2 style="color:#2c3e50; margin-bottom:15px;">Mes dernières commandes</h2>
+        
+        <div class="liste-commandes">
+            {% if historique %}
+                {% for cmd in historique %}
+                <div class="cmd-item">
+                    <div class="cmd-info">
+                        <strong>{{ cmd.nom_resto }}</strong>
+                        <span class="cmd-date">{{ cmd.date_heure_commande }}</span>
+                    </div>
+                    
+                    <div>
+                        <span class="status {{ cmd.statut_commande }}">
+                            {{ cmd.statut_commande }}
+                        </span>
+                        <span class="cmd-prix">{{ cmd.montant_total }} €</span>
+                        {% if cmd.statut_commande == 'en_livraison' %}
+                            <form action="{{ url_for('confirmer_livraison', id_commande=cmd.id_commande) }}" method="POST" style="margin-top: 10px; text-align: right;">
+                                <button type="submit" class="btn-reception">
+                                    Confirmer réception
+                                </button>
+                            </form>
+                        {% elif cmd.statut_commande == 'en_attente' %}
+                        <form action="{{ url_for('annuler_commande', id_commande=cmd.id_commande) }}" method="POST" style="margin-top: 10px; text-align: right;">
+                                <button type="submit" class="btn-reception">
+                                    annuler la commane
+                                </button>
+                            </form>
+                        {% endif %}
+                        {% if cmd.statut_commande == 'livree'%}
+                            {% if cmd.id_avis %}
+                                <div style="margin-top: 10px; text-align: right; color: #27ae60; font-size: 0.9rem;">
+                                    Merci pour votre avis
+                                </div>
+                            
+                            {% else %}
+                                <form action="{{ url_for('avis', id_commande=cmd.id_commande) }}" method="POST" style="margin-top: 10px; text-align: right;">
+                                    <button type="submit" class="Avis">
+                                        Donner votre avis !
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="padding:20px; text-align:center; color:#999;">
+                    Aucune commande passée pour le moment.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>

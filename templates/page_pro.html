@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enjoy - Espace Livreur</title>
+    <style>
+        /* --- BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f9f9f9; color: #333; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- COLORS --- */
+        :root { --main-green: #27ae60; --light-green: #eafaf1; --dark-text: #2c3e50; --red: #e74c3c; }
+
+        /* --- HEADER --- */
+        header {
+            padding: 1rem 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #eee;
+            background-color: white;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--main-green); letter-spacing: -1px; }
+        .btn-login {
+            background-color: var(--light-green); color: var(--main-green);
+            padding: 8px 18px; border-radius: 4px; font-weight: 600;
+        }
+        .btn-login:hover { background-color: var(--main-green); color: white; }
+        .btn-logout {
+            background-color: var(--light-green); 
+            color: var(--main-green);
+            padding: 8px 15px; 
+            border-radius: 4px; 
+            font-weight: 600;
+            transition: 0.2s;
+        }
+         header nav ul {
+            display: flex;       
+            align-items: center; 
+            gap: 15px;           
+        }
+        /* --- HERO SIMPLE --- */
+        .hero {
+            background-color: var(--main-green); color: white;
+            padding: 60px 20px; text-align: center;
+        }
+        .hero h1 { margin-bottom: 20px; font-weight: 500; }
+
+        /* --- GRID --- */
+        .container { padding: 40px 5%; max-width: 1200px; margin: 0 auto; }
+        .section-title { margin-bottom: 20px; font-size: 1.5rem; color: var(--dark-text); }
+        
+        .restaurant-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 25px;
+        }
+
+        /* --- CARD CLEAN (Commandes) --- */
+        .card {
+            border: 1px solid #ddd; border-radius: 8px; overflow: hidden;
+            transition: 0.2s; background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .card:hover { border-color: var(--main-green); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .card-content { padding: 15px; }
+        .card-header { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .resto-name { 
+            font-weight: bold; 
+            color: var(--main-green); 
+            font-size: 1.1rem; 
+        }
+        .resto-rating { 
+            color: #7f8c8d; 
+            font-size: 0.9rem;
+        }
+        
+        .btn-prendre {
+            margin-top: 15px; 
+            background-color: var(--main-green);
+            color: white; 
+            padding: 10px; 
+            border-radius: 4px; 
+            text-align: center; 
+            font-weight: 600; 
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            font-size: 1rem;
+        }
+        .btn-prendre:hover { background-color: #219150; }
+        
+        .btn-livrer {
+            background-color: var(--red);
+        }
+        .btn-livrer:hover { background-color: #c0392b; }
+
+        .commande-montant {
+            font-size: 1.5rem; 
+            font-weight: bold; 
+            color: var(--dark-text); 
+            margin-top: 10px;
+            text-align: right;
+        }
+
+        .commande-details h4 {
+            font-size: 1rem;
+            color: #27ae60;
+            margin-top: 10px;
+        }
+        .commande-details ul {
+            font-size: 0.9rem;
+            color: #555;
+            list-style: disc;
+            margin-left: 20px;
+        }
+        
+        .resto-info {
+            margin: 10px 0;
+            color: #555;
+        }
+        
+        .card-livraison {
+            border: 2px solid var(--red);
+        }
+
+        footer { text-align: center; padding: 30px; color: #aaa; font-size: 0.8rem; border-top: 1px solid #eee; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="logo">ENJOY PRO</a>
+        <nav>
+            <ul>
+                {% if nom %}
+                     <li>
+                    <a href="{{url_for('deconnexion')}}" class="btn-logout">
+                        Déconnexion
+                    </a>
+                     </li>
+
+
+                    <li><a class="btn-login">{{ nom }} ({{ etat }})</a></li>
+                    
+           
+                {% else %}
+                    <li><a href="{{ url_for('privateconnexion') }}" class="btn-login">Connexion Livreur</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <!-- COMMANDE EN COURS DE LIVRAISON -->
+    {% if commande_a_livrer %}
+        <section class="hero" style="background-color: var(--red);">
+            <h1>🚴 Tu dois livrer cette commande</h1>
+        </section>
+
+        <div class="container">
+            <h2 class="section-title" style="color: var(--red);">Commande en cours</h2>
+            <div class="card card-livraison">
+                <div class="card-content">
+                    <div class="card-header">
+                        <span class="resto-name" style="color: var(--red);">
+                            Livraison à {{ commande_a_livrer['ville'] }}
+                        </span> 
+                        <span class="resto-rating">{{ commande_a_livrer['date'].strftime('%H:%M') }}</span>
+                    </div>
+                    
+                    <p class="resto-info">
+                        <strong>Client :</strong> {{ commande_a_livrer['nom_client'] }}<br>
+                        <strong>Adresse :</strong> {{ commande_a_livrer['Lieu_client'] }}<br>
+                        <strong>Restaurant :</strong> {{ commande_a_livrer['nom_resto'] }}
+                    </p>
+
+                    <div class="commande-details">
+                        <h4>Contenu :</h4>
+                        <ul>
+                            {% for plat in commande_a_livrer['plats'] %}
+                                <li>{{ plat.quantite }} x {{ plat.nom }} ({{ plat.prix }}€)</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <div class="commande-montant">
+                        Total: {{ commande_a_livrer['montant'] }}€
+                    </div>
+                    
+                    
+                        <button type="submit" class="btn-prendre btn-livrer">
+                            ✓ a livrée
+                        </button>
+                   
+                </div>
+            </div>
+        </div>
+    
+    <!-- COMMANDES DISPONIBLES -->
+    {% elif commandes %}
+        <section class="hero">
+            <h1>Tu vas livrer quoi ce midi ?</h1>
+        </section>
+
+        <div class="container">
+            <h2 class="section-title">Commandes disponibles ({{ commandes|length }})</h2>
+            <div class="restaurant-grid">
+                {% for commande in commandes %}
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-header">
+                            <span class="resto-name">Livraison à {{ commande['ville'] }}</span> 
+                            <span class="resto-rating">{{ commande['date'].strftime('%H:%M') }}</span>
+                        </div>
+                        
+                        <p class="resto-info">
+                            <strong>Client :</strong> {{ commande['nom_client'] }}<br>
+                            <strong>Adresse :</strong> {{ commande['Lieu_client'] }}<br>
+                            <strong>Restaurant :</strong> {{ commande['nom_resto'] }}
+                        </p>
+
+                        <div class="commande-details">
+                            <h4>Contenu :</h4>
+                            <ul>
+                                {% for plat in commande['plats'] %}
+                                    <li>{{ plat.quantite }} x {{ plat.nom }} ({{ plat.prix }}€)</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="commande-montant">
+                            Total: {{ commande['montant'] }}€
+                        </div>
+                        
+                        <form method="POST" action="{{ url_for('prend_commande', id_commande=commande['id_commande']) }}">
+                            <button type="submit" class="btn-prendre">
+                                ✓ Prendre la commande
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    
+    <!-- AUCUNE COMMANDE -->
+    {% else %}
+        <section class="hero">
+            <h1>Espace Livreur</h1>
+        </section>
+
+        <div class="container">
+            <div style="text-align: center; padding: 60px; background: white; border-radius: 8px;">
+                <h2 style="color: #999;">😴 Aucune commande disponible</h2>
+                <p style="color: #bbb; margin-top: 10px;">Revenez plus tard pour voir les nouvelles commandes</p>
+            </div>
+        </div>
+    {% endif %}
+    
+    <footer>&copy; 2025 Enjoy App</footer>
+</body>
+</html>

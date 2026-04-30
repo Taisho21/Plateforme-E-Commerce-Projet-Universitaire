@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #fff; color: #333; margin: 0; padding: 40px 0; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+        
+        h2 { text-align: center; color: #27ae60; margin-bottom: 30px; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full { grid-column: 1 / -1; width:100% ;}
+
+        input[type="text"], input[type="password"] {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; outline: none;
+        }
+        input:focus { border-color: #27ae60; }
+
+        input[type="submit"] {
+            width: 100%; padding: 14px; background: #27ae60; color: white;
+            border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 20px;
+        }
+        input[type="submit"]:hover { background: #219150; }
+        
+        .error { background: #ffebee; color: #c62828; padding: 10px; border-radius: 4px; margin-bottom: 20px; text-align: center; }
+        .login-link { text-align: center; margin-top: 20px; font-size: 0.9rem; }
+        a { color: #27ae60; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Votre avis compte !</h2>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        
+            <div class="grid">
+                <form method="post" action="{{ url_for('avis_verif', id_commande = id_commande) }}">
+
+                <label for="note">Choisissez la note de votre commande :</label>
+                <select name="note" id="note_commande" required>
+                    <option value="0">0⭐</option>
+                    <option value="1">1⭐</option>
+                    <option value="2">2⭐</option>
+                    <option value="3">3⭐</option>
+                    <option value="4">4⭐</option>
+                    <option value="5" selected>5⭐</option>
+                </select>
+            <textarea name="commentaire" placeholder="Écrivez votre avis ici..." class="full" required resize : none;></textarea>    
+            </div>
+            <input type="submit" value="Envoyer ">
+            </div>
+        </form>
+        
+
+    
+
+</body>
+</html>
