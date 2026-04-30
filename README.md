@@ -1,7 +1,3 @@
-Voici un modèle de `README.md` structuré et professionnel, basé sur les informations de ton rapport de projet. Il met particulièrement en valeur l'architecture de ta base de données et tes choix techniques.
-
-***
-
 # Enjoy! Restauration à domicile 🍔
 
 Ce projet universitaire consiste en la création d'un site web fonctionnel inspiré d'applications comme UberEats. L'objectif principal est de mettre en relation des restaurants, des livreurs et des clients autour d'un système de commande fluide et efficace. L'interface a été pensée pour être épurée, avec peu de boutons, afin de ne pas perdre l'utilisateur.
